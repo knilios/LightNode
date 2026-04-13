@@ -2,9 +2,21 @@
 
 LightNode is a storage-first file system service for single-node Raspberry Pi-class hardware.
 
+This repository implements the microkernel core service (kernel monolith) that powers authentication, storage, metadata, audit, and API behavior.
+
 ## Quick Start
 
 The current implementation focuses on storage preparation and inspection from the terminal.
+
+### Install in your virtual environment
+
+Before running `python -m lightnode`, install the project once in editable mode:
+
+```powershell
+python -m pip install -e .
+```
+
+This avoids `No module named lightnode` errors.
 
 ### Prepare an empty storage drive
 

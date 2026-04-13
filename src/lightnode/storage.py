@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 import json
 import logging
 import os
-from pathlib import Path
 import shutil
 import sqlite3
 import uuid
@@ -137,9 +136,14 @@ class StorageService:
             self._connection.close()
             self._connection = None
 
+    def connection(self) -> sqlite3.Connection:
+        if self._connection is None:
+            raise StorageError("Storage database is not open")
+        return self._connection
+
     def _validate_storage_root(self) -> None:
         root = self.settings.storage_root
-        if self.settings.require_external_storage and not root.exists():
+        if self.settings.require_external_storage and not root.exists() and not self.settings.allow_storage_bootstrap:
             raise StorageError(f"Storage root does not exist: {root}")
         if not root.exists():
             root.mkdir(parents=True, exist_ok=True)
