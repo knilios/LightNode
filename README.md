@@ -142,3 +142,10 @@ All protected endpoints require a valid, active bearer token via the `Authorizat
 - SQLite metadata and file payloads live on the same storage drive.
 - Admin CLI commands require local database access (host-only, no network auth).
 - The terminal commands work on both Windows and Linux; the default storage root is OS-aware, but you can always pass `--root` explicitly.
+
+## Companion Repositories
+
+These extension repositories are part of the wider LightNode ecosystem:
+
+- [LightNodeMCPServer](https://github.com/knilios/LightNodeMCPServer)
+- [LightNodeWebApp](https://github.com/knilios/LightNodeWebApp)
