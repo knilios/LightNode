@@ -12,6 +12,7 @@ import tempfile
 import uuid
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
@@ -192,6 +193,17 @@ def create_app(settings: LightNodeSettings | None = None) -> FastAPI:
             storage.close()
 
     app = FastAPI(title="LightNode", lifespan=lifespan)
+
+    if runtime_settings.cors_allow_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=runtime_settings.cors_allow_origins,
+            allow_methods=runtime_settings.cors_allow_methods or ["*"],
+            allow_headers=runtime_settings.cors_allow_headers or ["*"],
+            expose_headers=runtime_settings.cors_expose_headers or [],
+            allow_credentials=runtime_settings.cors_allow_credentials,
+            max_age=runtime_settings.cors_max_age,
+        )
 
     @app.get("/health")
     def health() -> dict[str, object]:

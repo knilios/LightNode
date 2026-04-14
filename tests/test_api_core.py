@@ -89,3 +89,27 @@ def test_auth_and_file_folder_crud_flow(tmp_path: Path) -> None:
 
         logout = client.post("/auth/logout", headers=headers)
         assert logout.status_code == 200
+
+
+def test_cors_preflight_uses_configured_origins(tmp_path: Path) -> None:
+    settings = setup_storage(tmp_path)
+    settings.cors_allow_origins = ["http://localhost:3000"]
+    settings.cors_allow_methods = ["GET", "POST"]
+    settings.cors_allow_headers = ["Authorization", "Content-Type"]
+    settings.cors_allow_credentials = True
+
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        response = client.options(
+            "/auth/me",
+            headers={
+                "Origin": "http://localhost:3000",
+                "Access-Control-Request-Method": "GET",
+                "Access-Control-Request-Headers": "Authorization",
+            },
+        )
+
+        assert response.status_code == 200
+        assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+        assert response.headers["access-control-allow-credentials"] == "true"

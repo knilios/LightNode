@@ -53,18 +53,18 @@ After storage has been initialized, start the FastAPI service with Uvicorn. Poin
 Windows:
 
 ```powershell
-$env:LIGHTNODE_STORAGE_ROOT = "D:\lightnode"
-uvicorn lightnode.app:app --reload
+python -m uvicorn --app-dir src --host 0.0.0.0 --port 8000 --env-file .env lightnode.app:app --reload
 ```
 
 Linux:
 
 ```bash
-export LIGHTNODE_STORAGE_ROOT=/srv/lightnode/storage
-uvicorn lightnode.app:app --reload
+python -m uvicorn --app-dir src --host 0.0.0.0 --port 8000 --env-file .env lightnode.app:app --reload
 ```
 
-By default the service listens on `http://127.0.0.1:8000`. The OpenAPI docs are available at `http://127.0.0.1:8000/docs`.
+The `.env` file already includes `LIGHTNODE_STORAGE_ROOT`, so no separate shell export is needed for first start. The command above binds on all interfaces so clients can reach `http://192.168.56.1:8000` from your network. The OpenAPI docs are available at `http://127.0.0.1:8000/docs` locally.
+
+If your editor says `.env` injection is disabled, that only affects automatic terminal environment loading. Using `--env-file .env` makes Uvicorn read the file explicitly.
 
 If you want to use a different storage directory, initialize it first with `python -m lightnode storage init --root <storage-path>` and then start the API with the same path in `LIGHTNODE_STORAGE_ROOT`.
 

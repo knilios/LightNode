@@ -12,6 +12,14 @@ def _parse_bool(value: str | None, default: bool = False) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _parse_csv_list(value: str | None) -> list[str] | None:
+    if value is None:
+        return None
+    items = [item.strip() for item in value.split(",")]
+    filtered = [item for item in items if item]
+    return filtered or None
+
+
 def _default_storage_root() -> Path:
     if os.name == "nt":
         return Path(r"C:\lightnode\storage")
@@ -32,6 +40,12 @@ class LightNodeSettings:
     lightnode_version: str = "0.1.0"
     supported_marker_format_version: int = 1
     instance_id: str | None = None
+    cors_allow_origins: list[str] | None = None
+    cors_allow_methods: list[str] | None = None
+    cors_allow_headers: list[str] | None = None
+    cors_expose_headers: list[str] | None = None
+    cors_allow_credentials: bool = False
+    cors_max_age: int = 600
 
     @classmethod
     def from_env(cls) -> "LightNodeSettings":
@@ -50,6 +64,12 @@ class LightNodeSettings:
             lightnode_version=os.getenv("LIGHTNODE_VERSION", "0.1.0"),
             supported_marker_format_version=int(os.getenv("LIGHTNODE_MARKER_FORMAT_VERSION", "1")),
             instance_id=instance_id or None,
+            cors_allow_origins=_parse_csv_list(os.getenv("LIGHTNODE_CORS_ALLOW_ORIGINS")),
+            cors_allow_methods=_parse_csv_list(os.getenv("LIGHTNODE_CORS_ALLOW_METHODS")),
+            cors_allow_headers=_parse_csv_list(os.getenv("LIGHTNODE_CORS_ALLOW_HEADERS")),
+            cors_expose_headers=_parse_csv_list(os.getenv("LIGHTNODE_CORS_EXPOSE_HEADERS")),
+            cors_allow_credentials=_parse_bool(os.getenv("LIGHTNODE_CORS_ALLOW_CREDENTIALS"), False),
+            cors_max_age=int(os.getenv("LIGHTNODE_CORS_MAX_AGE", "600")),
         )
 
     @property
